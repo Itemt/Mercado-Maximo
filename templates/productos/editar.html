@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Producto - {{ producto.nombre }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-edit me-2"></i>
+        Editar Producto
+    </h1>
+    <div>
+        <a href="{{ url_for('ver_producto', id=producto.id) }}" class="btn btn-info">
+            <i class="fas fa-eye me-2"></i>Ver Detalle
+        </a>
+        <a href="{{ url_for('listar_productos') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información del Producto</h5>
+                <small class="text-muted">Producto ID: {{ producto.id }}</small>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="nombre" class="form-label">Nombre del Producto *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   value="{{ producto.nombre }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <input type="text" class="form-control" id="categoria" name="categoria" 
+                                   value="{{ producto.categoria or '' }}" placeholder="Ej: Electrónicos, Ropa, etc.">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                  placeholder="Descripción detallada del producto...">{{ producto.descripcion or '' }}</textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="precio" name="precio" 
+                                       step="0.01" min="0" value="{{ producto.precio }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Actual</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="stock" name="stock" 
+                                       min="0" value="{{ producto.stock }}">
+                                <span class="input-group-text">unidades</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Creación</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ producto.fecha_creacion.strftime('%d/%m/%Y a las %H:%M') }}" 
+                                   readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Unidades Vendidas</label>
+                            <input type="text" class="form-control" 
+                                   value="{{ producto.detalles_venta|sum(attribute='cantidad') or 0 }} unidad(es)" 
+                                   readonly>
+                        </div>
+                    </div>
+                    
+                    {% if producto.stock == 0 %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Producto sin stock:</strong> Este producto está agotado. Considera actualizar el stock.
+                        </div>
+                    {% elif producto.stock <= 5 %}
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Stock bajo:</strong> Este producto tiene pocas unidades disponibles.
+                        </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('ver_producto', id=producto.id) }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Panel de Gestión de Stock -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-warehouse me-2"></i>
+                    Gestión de Stock
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Stock Actual:</strong> 
+                            {% if producto.stock > 10 %}
+                                <span class="badge bg-success">{{ producto.stock }} unidades</span>
+                            {% elif producto.stock > 0 %}
+                                <span class="badge bg-warning text-dark">{{ producto.stock }} unidades</span>
+                            {% else %}
+                                <span class="badge bg-danger">Agotado</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Vendidas:</strong> {{ producto.detalles_venta|sum(attribute='cantidad') or 0 }} unidades</p>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success btn-sm me-2" onclick="ajustarStock(10)">
+                            <i class="fas fa-plus me-1"></i>+10
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm me-2" onclick="ajustarStock(5)">
+                            <i class="fas fa-plus me-1"></i>+5
+                        </button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="ajustarStock(1)">
+                            <i class="fas fa-plus me-1"></i>+1
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Panel de Acciones Adicionales -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0 text-danger">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Zona de Peligro
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">
+                    Eliminar este producto eliminará también su historial de ventas. 
+                    Esta acción no se puede deshacer.
+                </p>
+                <button type="button" class="btn btn-outline-danger" 
+                        onclick="confirmarEliminacion()">
+                    <i class="fas fa-trash me-2"></i>Eliminar Producto
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmación de Eliminación -->
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar el producto <strong>{{ producto.nombre }}</strong>?</p>
+                <p class="text-danger"><small>Esta acción eliminará también {{ producto.detalles_venta|length }} venta(s) asociada(s) y no se puede deshacer.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form action="{{ url_for('eliminar_producto', id=producto.id) }}" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-2"></i>Eliminar Definitivamente
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validación del formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    const nombre = document.getElementById('nombre').value.trim();
+    const precio = document.getElementById('precio').value;
+    
+    if (!nombre) {
+        e.preventDefault();
+        alert('Por favor, ingresa el nombre del producto');
+        return false;
+    }
+    
+    if (!precio || parseFloat(precio) <= 0) {
+        e.preventDefault();
+        alert('Por favor, ingresa un precio válido mayor a 0');
+        return false;
+    }
+});
+
+// Formatear precio mientras se escribe
+document.getElementById('precio').addEventListener('input', function(e) {
+    let value = e.target.value;
+    if (value && !isNaN(value)) {
+        if (value.includes('.')) {
+            let parts = value.split('.');
+            if (parts[1] && parts[1].length > 2) {
+                e.target.value = parseFloat(value).toFixed(2);
+            }
+        }
+    }
+});
+
+// Ajustar stock rápidamente
+function ajustarStock(cantidad) {
+    const stockInput = document.getElementById('stock');
+    const stockActual = parseInt(stockInput.value) || 0;
+    stockInput.value = stockActual + cantidad;
+    stockInput.focus();
+}
+
+function confirmarEliminacion() {
+    var modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
+    modal.show();
+}
+</script>
+{% endblock %}

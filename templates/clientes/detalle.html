@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}{{ cliente.nombre }} {{ cliente.apellido }} - Cliente{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-user me-2"></i>
+        {{ cliente.nombre }} {{ cliente.apellido }}
+    </h1>
+    <div>
+        <a href="{{ url_for('editar_cliente', id=cliente.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Editar
+        </a>
+        <a href="{{ url_for('listar_clientes') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información del Cliente -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Información Personal
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>ID:</strong></div>
+                    <div class="col-sm-8">{{ cliente.id }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Nombre:</strong></div>
+                    <div class="col-sm-8">{{ cliente.nombre }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Apellido:</strong></div>
+                    <div class="col-sm-8">{{ cliente.apellido }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Email:</strong></div>
+                    <div class="col-sm-8">
+                        <a href="mailto:{{ cliente.email }}">{{ cliente.email }}</a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Teléfono:</strong></div>
+                    <div class="col-sm-8">
+                        {% if cliente.telefono %}
+                            <a href="tel:{{ cliente.telefono }}">{{ cliente.telefono }}</a>
+                        {% else %}
+                            <span class="text-muted">No especificado</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Dirección:</strong></div>
+                    <div class="col-sm-8">
+                        {% if cliente.direccion %}
+                            {{ cliente.direccion }}
+                        {% else %}
+                            <span class="text-muted">No especificada</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Registrado:</strong></div>
+                    <div class="col-sm-8">{{ cliente.fecha_registro.strftime('%d/%m/%Y a las %H:%M') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas de Ventas -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Estadísticas de Compras
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set total_ventas = cliente.ventas|length %}
+                {% set total_gastado = cliente.ventas|sum(attribute='total') %}
+                {% set ventas_completadas = cliente.ventas|selectattr('estado', 'equalto', 'Completada')|list|length %}
+                {% set ventas_pendientes = cliente.ventas|selectattr('estado', 'equalto', 'Pendiente')|list|length %}
+                
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h4 class="text-primary">{{ total_ventas }}</h4>
+                            <p class="mb-0 text-muted">Compras Totales</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h4 class="text-success">${{ "%.2f"|format(total_gastado) }}</h4>
+                            <p class="mb-0 text-muted">Total Gastado</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <h4 class="text-info">{{ ventas_completadas }}</h4>
+                            <p class="mb-0 text-muted">Completadas</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <h4 class="text-warning">{{ ventas_pendientes }}</h4>
+                            <p class="mb-0 text-muted">Pendientes</p>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if total_ventas > 0 %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('nueva_venta') }}?cliente_id={{ cliente.id }}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-plus me-2"></i>Nueva Venta
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Historial de Ventas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>
+                    Historial de Ventas
+                </h5>
+                {% if cliente.ventas %}
+                    <span class="badge bg-primary">{{ cliente.ventas|length }} venta(s)</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if cliente.ventas %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID Venta</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta in cliente.ventas|sort(attribute='fecha_venta', reverse=true) %}
+                                <tr>
+                                    <td><strong>#{{ venta.id }}</strong></td>
+                                    <td>{{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                                    <td>
+                                        {% if venta.estado == 'Completada' %}
+                                            <span class="badge bg-success">{{ venta.estado }}</span>
+                                        {% elif venta.estado == 'Pendiente' %}
+                                            <span class="badge bg-warning text-dark">{{ venta.estado }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ venta.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('ver_venta', id=venta.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Este cliente aún no ha realizado ninguna compra.</p>
+                        <a href="{{ url_for('nueva_venta') }}?cliente_id={{ cliente.id }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primera Venta
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

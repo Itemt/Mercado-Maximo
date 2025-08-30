@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Venta - Sistema de Gestión de Ventas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-cash-register me-2"></i>
+        Nueva Venta
+    </h1>
+    <a href="{{ url_for('listar_ventas') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información de la Venta</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" id="formVenta">
+                    <!-- Selección de Cliente -->
+                    <div class="mb-4">
+                        <label for="cliente_id" class="form-label">Cliente *</label>
+                        <select class="form-select" id="cliente_id" name="cliente_id" required>
+                            <option value="">Selecciona un cliente...</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}" 
+                                        {% if request.args.get('cliente_id') == cliente.id|string %}selected{% endif %}>
+                                    {{ cliente.nombre }} {{ cliente.apellido }} - {{ cliente.email }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            <a href="{{ url_for('nuevo_cliente') }}" target="_blank">¿No encuentras el cliente? Crear nuevo cliente</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Productos -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label mb-0">Productos *</label>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="agregarProducto()">
+                                <i class="fas fa-plus me-1"></i>Agregar Producto
+                            </button>
+                        </div>
+                        
+                        <div id="productosContainer">
+                            <!-- Los productos se agregarán aquí dinámicamente -->
+                        </div>
+                        
+                        {% if productos|length == 0 %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                No hay productos con stock disponible. 
+                                <a href="{{ url_for('nuevo_producto') }}">Agregar productos</a> antes de crear una venta.
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('listar_ventas') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary" {% if productos|length == 0 %}disabled{% endif %}>
+                            <i class="fas fa-save me-2"></i>Crear Venta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Panel de Resumen -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calculator me-2"></i>
+                    Resumen de Venta
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Cliente:</strong>
+                    <div id="clienteSeleccionado" class="text-muted">Ningún cliente seleccionado</div>
+                </div>
+                
+                <hr>
+                
+                <div class="mb-3">
+                    <strong>Productos:</strong>
+                    <div id="resumenProductos" class="text-muted">No hay productos agregados</div>
+                </div>
+                
+                <hr>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>Total:</strong>
+                    <h4 class="text-success mb-0" id="totalVenta">$0.00</h4>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Productos Disponibles -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-box me-2"></i>
+                    Productos Disponibles
+                </h5>
+            </div>
+            <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                {% for producto in productos %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                        <div>
+                            <strong>{{ producto.nombre }}</strong>
+                            <br><small class="text-muted">${{ "%.2f"|format(producto.precio) }} - Stock: {{ producto.stock }}</small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                onclick="agregarProductoRapido({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio }}, {{ producto.stock }})">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template para fila de producto -->
+<template id="templateProducto">
+    <div class="row align-items-center mb-3 producto-row">
+        <div class="col-md-5">
+            <select class="form-select producto-select" name="producto_id" required onchange="actualizarProducto(this)">
+                <option value="">Selecciona un producto...</option>
+                {% for producto in productos %}
+                    <option value="{{ producto.id }}" data-precio="{{ producto.precio }}" data-stock="{{ producto.stock }}">
+                        {{ producto.nombre }} - ${{ "%.2f"|format(producto.precio) }} (Stock: {{ producto.stock }})
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control cantidad-input" name="cantidad" 
+                   placeholder="Cantidad" min="1" required onchange="calcularSubtotal(this)">
+        </div>
+        <div class="col-md-2">
+            <div class="subtotal-display fw-bold">$0.00</div>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="eliminarProducto(this)">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let contadorProductos = 0;
+
+// Actualizar cliente seleccionado
+document.getElementById('cliente_id').addEventListener('change', function() {
+    const select = this;
+    const clienteDiv = document.getElementById('clienteSeleccionado');
+    
+    if (select.value) {
+        const texto = select.options[select.selectedIndex].text;
+        clienteDiv.textContent = texto;
+        clienteDiv.className = '';
+    } else {
+        clienteDiv.textContent = 'Ningún cliente seleccionado';
+        clienteDiv.className = 'text-muted';
+    }
+});
+
+function agregarProducto() {
+    const template = document.getElementById('templateProducto');
+    const clone = template.content.cloneNode(true);
+    
+    contadorProductos++;
+    const container = document.getElementById('productosContainer');
+    container.appendChild(clone);
+    
+    actualizarResumen();
+}
+
+function agregarProductoRapido(id, nombre, precio, stock) {
+    agregarProducto();
+    
+    // Obtener la última fila agregada
+    const filas = document.querySelectorAll('.producto-row');
+    const ultimaFila = filas[filas.length - 1];
+    
+    // Seleccionar el producto
+    const select = ultimaFila.querySelector('.producto-select');
+    select.value = id;
+    
+    // Establecer cantidad por defecto
+    const cantidadInput = ultimaFila.querySelector('.cantidad-input');
+    cantidadInput.value = 1;
+    cantidadInput.max = stock;
+    
+    // Calcular subtotal
+    actualizarProducto(select);
+}
+
+function eliminarProducto(btn) {
+    btn.closest('.producto-row').remove();
+    actualizarResumen();
+}
+
+function actualizarProducto(select) {
+    const fila = select.closest('.producto-row');
+    const cantidadInput = fila.querySelector('.cantidad-input');
+    const option = select.options[select.selectedIndex];
+    
+    if (option.value) {
+        const stock = parseInt(option.dataset.stock);
+        cantidadInput.max = stock;
+        
+        if (parseInt(cantidadInput.value) > stock) {
+            cantidadInput.value = stock;
+        }
+    }
+    
+    calcularSubtotal(cantidadInput);
+}
+
+function calcularSubtotal(input) {
+    const fila = input.closest('.producto-row');
+    const select = fila.querySelector('.producto-select');
+    const subtotalDiv = fila.querySelector('.subtotal-display');
+    
+    const option = select.options[select.selectedIndex];
+    if (option.value && input.value) {
+        const precio = parseFloat(option.dataset.precio);
+        const cantidad = parseInt(input.value);
+        const subtotal = precio * cantidad;
+        
+        subtotalDiv.textContent = '$' + subtotal.toFixed(2);
+    } else {
+        subtotalDiv.textContent = '$0.00';
+    }
+    
+    actualizarResumen();
+}
+
+function actualizarResumen() {
+    const filas = document.querySelectorAll('.producto-row');
+    let total = 0;
+    let productos = [];
+    
+    filas.forEach(fila => {
+        const select = fila.querySelector('.producto-select');
+        const cantidadInput = fila.querySelector('.cantidad-input');
+        const option = select.options[select.selectedIndex];
+        
+        if (option.value && cantidadInput.value) {
+            const precio = parseFloat(option.dataset.precio);
+            const cantidad = parseInt(cantidadInput.value);
+            const subtotal = precio * cantidad;
+            
+            total += subtotal;
+            productos.push({
+                nombre: option.text.split(' - ')[0],
+                cantidad: cantidad,
+                subtotal: subtotal
+            });
+        }
+    });
+    
+    // Actualizar total
+    document.getElementById('totalVenta').textContent = '$' + total.toFixed(2);
+    
+    // Actualizar lista de productos
+    const resumenDiv = document.getElementById('resumenProductos');
+    if (productos.length > 0) {
+        let html = '';
+        productos.forEach(p => {
+            html += `<div class="d-flex justify-content-between">
+                        <span>${p.nombre} (${p.cantidad})</span>
+                        <span>$${p.subtotal.toFixed(2)}</span>
+                     </div>`;
+        });
+        resumenDiv.innerHTML = html;
+    } else {
+        resumenDiv.innerHTML = '<span class="text-muted">No hay productos agregados</span>';
+    }
+}
+
+// Validación del formulario
+document.getElementById('formVenta').addEventListener('submit', function(e) {
+    const cliente = document.getElementById('cliente_id').value;
+    const productos = document.querySelectorAll('.producto-row');
+    
+    if (!cliente) {
+        e.preventDefault();
+        alert('Por favor, selecciona un cliente');
+        return false;
+    }
+    
+    if (productos.length === 0) {
+        e.preventDefault();
+        alert('Por favor, agrega al menos un producto');
+        return false;
+    }
+    
+    // Validar que todos los productos tengan cantidad
+    let valid = true;
+    productos.forEach(fila => {
+        const select = fila.querySelector('.producto-select');
+        const cantidad = fila.querySelector('.cantidad-input');
+        
+        if (!select.value || !cantidad.value || cantidad.value <= 0) {
+            valid = false;
+        }
+    });
+    
+    if (!valid) {
+        e.preventDefault();
+        alert('Por favor, completa todos los productos con cantidades válidas');
+        return false;
+    }
+});
+
+// Agregar primer producto automáticamente
+document.addEventListener('DOMContentLoaded', function() {
+    {% if productos|length > 0 %}
+        agregarProducto();
+    {% endif %}
+});
+</script>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Producto - Sistema de Gestión de Ventas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-plus-square me-2"></i>
+        Nuevo Producto
+    </h1>
+    <a href="{{ url_for('listar_productos') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Información del Producto</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="nombre" class="form-label">Nombre del Producto *</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <input type="text" class="form-control" id="categoria" name="categoria" 
+                                   placeholder="Ej: Electrónicos, Ropa, etc.">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                  placeholder="Descripción detallada del producto..."></textarea>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="precio" class="form-label">Precio *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="precio" name="precio" 
+                                       step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Inicial</label>
+                            <input type="number" class="form-control" id="stock" name="stock" 
+                                   min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Nota:</strong> El stock se puede modificar posteriormente desde la edición del producto.
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('listar_productos') }}" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Guardar Producto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Validación del formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    const nombre = document.getElementById('nombre').value.trim();
+    const precio = document.getElementById('precio').value;
+    
+    if (!nombre) {
+        e.preventDefault();
+        alert('Por favor, ingresa el nombre del producto');
+        return false;
+    }
+    
+    if (!precio || parseFloat(precio) <= 0) {
+        e.preventDefault();
+        alert('Por favor, ingresa un precio válido mayor a 0');
+        return false;
+    }
+});
+
+// Formatear precio mientras se escribe
+document.getElementById('precio').addEventListener('input', function(e) {
+    let value = e.target.value;
+    if (value && !isNaN(value)) {
+        // Limitar a 2 decimales
+        if (value.includes('.')) {
+            let parts = value.split('.');
+            if (parts[1] && parts[1].length > 2) {
+                e.target.value = parseFloat(value).toFixed(2);
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

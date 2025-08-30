@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Ventas - Sistema de Gestión de Ventas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-shopping-cart me-2"></i>
+        Gestión de Ventas
+    </h1>
+    <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Nueva Venta
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado">
+                    <option value="">Todos los estados</option>
+                    <option value="Pendiente" {% if request.args.get('estado') == 'Pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="Completada" {% if request.args.get('estado') == 'Completada' %}selected{% endif %}>Completada</option>
+                    <option value="Cancelada" {% if request.args.get('estado') == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="fecha_desde" class="form-label">Desde</label>
+                <input type="date" class="form-control" id="fecha_desde" name="fecha_desde" 
+                       value="{{ request.args.get('fecha_desde', '') }}">
+            </div>
+            <div class="col-md-3">
+                <label for="fecha_hasta" class="form-label">Hasta</label>
+                <input type="date" class="form-control" id="fecha_hasta" name="fecha_hasta" 
+                       value="{{ request.args.get('fecha_hasta', '') }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search me-2"></i>Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if ventas %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Fecha</th>
+                            <th>Total</th>
+                            <th>Estado</th>
+                            <th>Items</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for venta in ventas %}
+                        <tr>
+                            <td><strong>#{{ venta.id }}</strong></td>
+                            <td>
+                                <div>
+                                    <strong>{{ venta.cliente.nombre }} {{ venta.cliente.apellido }}</strong>
+                                    <br><small class="text-muted">{{ venta.cliente.email }}</small>
+                                </div>
+                            </td>
+                            <td>
+                                <div>
+                                    {{ venta.fecha_venta.strftime('%d/%m/%Y') }}
+                                    <br><small class="text-muted">{{ venta.fecha_venta.strftime('%H:%M') }}</small>
+                                </div>
+                            </td>
+                            <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                            <td>
+                                {% if venta.estado == 'Completada' %}
+                                    <span class="badge bg-success">{{ venta.estado }}</span>
+                                {% elif venta.estado == 'Pendiente' %}
+                                    <span class="badge bg-warning text-dark">{{ venta.estado }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ venta.estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ venta.detalles|length }} item(s)</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('ver_venta', id=venta.id) }}" 
+                                       class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if venta.estado == 'Pendiente' %}
+                                        <button type="button" class="btn btn-sm btn-outline-success" 
+                                                title="Completar venta" onclick="cambiarEstado({{ venta.id }}, 'Completada')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" 
+                                                title="Cancelar venta" onclick="cambiarEstado({{ venta.id }}, 'Cancelada')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Resumen -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                {% set total_ventas = ventas|length %}
+                                {% set total_ingresos = ventas|sum(attribute='total') %}
+                                {% set ventas_completadas = ventas|selectattr('estado', 'equalto', 'Completada')|list|length %}
+                                {% set ventas_pendientes = ventas|selectattr('estado', 'equalto', 'Pendiente')|list|length %}
+                                
+                                <div class="col-md-3">
+                                    <h5 class="text-primary">{{ total_ventas }}</h5>
+                                    <p class="mb-0 text-muted">Total Ventas</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-success">${{ "%.2f"|format(total_ingresos) }}</h5>
+                                    <p class="mb-0 text-muted">Ingresos</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-info">{{ ventas_completadas }}</h5>
+                                    <p class="mb-0 text-muted">Completadas</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-warning">{{ ventas_pendientes }}</h5>
+                                    <p class="mb-0 text-muted">Pendientes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No hay ventas registradas</h4>
+                <p class="text-muted">Comienza creando tu primera venta</p>
+                <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Crear Venta
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal para Cambiar Estado -->
+<div class="modal fade" id="modalEstado" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambiar Estado de Venta</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas cambiar el estado de la venta <strong id="ventaId"></strong> a <strong id="nuevoEstado"></strong>?</p>
+                <div id="advertenciaStock" class="alert alert-warning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Esta acción puede afectar el stock de los productos.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="formCambiarEstado" method="POST" style="display: inline;">
+                    <input type="hidden" name="estado" id="estadoInput">
+                    <button type="submit" class="btn btn-primary" id="btnConfirmar">
+                        <i class="fas fa-check me-2"></i>Confirmar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function cambiarEstado(ventaId, nuevoEstado) {
+    document.getElementById('ventaId').textContent = '#' + ventaId;
+    document.getElementById('nuevoEstado').textContent = nuevoEstado;
+    document.getElementById('estadoInput').value = nuevoEstado;
+    document.getElementById('formCambiarEstado').action = '/ventas/' + ventaId + '/estado';
+    
+    // Mostrar advertencia si es cancelación
+    const advertencia = document.getElementById('advertenciaStock');
+    if (nuevoEstado === 'Cancelada') {
+        advertencia.style.display = 'block';
+    } else {
+        advertencia.style.display = 'none';
+    }
+    
+    // Cambiar color del botón
+    const btnConfirmar = document.getElementById('btnConfirmar');
+    if (nuevoEstado === 'Completada') {
+        btnConfirmar.className = 'btn btn-success';
+        btnConfirmar.innerHTML = '<i class="fas fa-check me-2"></i>Completar';
+    } else {
+        btnConfirmar.className = 'btn btn-danger';
+        btnConfirmar.innerHTML = '<i class="fas fa-times me-2"></i>Cancelar';
+    }
+    
+    var modal = new bootstrap.Modal(document.getElementById('modalEstado'));
+    modal.show();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,386 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes - Sistema de Gestión de Ventas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-chart-bar me-2"></i>
+        Reportes y Análisis
+    </h1>
+    <div>
+        <button type="button" class="btn btn-outline-primary" onclick="exportarReporte()">
+            <i class="fas fa-download me-2"></i>Exportar
+        </button>
+        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="fas fa-print me-2"></i>Imprimir
+        </button>
+    </div>
+</div>
+
+<!-- Resumen de Ventas por Estado -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-pie-chart me-2"></i>
+                    Ventas por Estado
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if ventas_por_estado %}
+                    <div class="row">
+                        {% for estado in ventas_por_estado %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card 
+                                {% if estado.estado == 'Completada' %}border-success{% elif estado.estado == 'Pendiente' %}border-warning{% else %}border-danger{% endif %}">
+                                <div class="card-body text-center">
+                                    <h3 class="
+                                        {% if estado.estado == 'Completada' %}text-success{% elif estado.estado == 'Pendiente' %}text-warning{% else %}text-danger{% endif %}">
+                                        {{ estado.cantidad }}
+                                    </h3>
+                                    <p class="card-title">{{ estado.estado }}</p>
+                                    <p class="text-muted mb-0">
+                                        Total: ${{ "%.2f"|format(estado.total or 0) }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay datos de ventas disponibles</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Productos Más Vendidos -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-trophy me-2"></i>
+                    Top 10 Productos Más Vendidos
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if productos_mas_vendidos %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Producto</th>
+                                    <th>Vendidos</th>
+                                    <th>Ingresos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for producto in productos_mas_vendidos %}
+                                <tr>
+                                    <td>
+                                        {% if loop.index <= 3 %}
+                                            <i class="fas fa-medal text-warning"></i>
+                                        {% else %}
+                                            {{ loop.index }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ producto.nombre }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">{{ producto.cantidad_vendida }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success">${{ "%.2f"|format(producto.ingresos) }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay productos vendidos</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mejores Clientes -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-star me-2"></i>
+                    Top 10 Mejores Clientes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if mejores_clientes %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cliente</th>
+                                    <th>Compras</th>
+                                    <th>Total Gastado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cliente in mejores_clientes %}
+                                <tr>
+                                    <td>
+                                        {% if loop.index <= 3 %}
+                                            <i class="fas fa-crown text-warning"></i>
+                                        {% else %}
+                                            {{ loop.index }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <strong>{{ cliente.nombre }} {{ cliente.apellido }}</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ cliente.total_compras }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success">${{ "%.2f"|format(cliente.total_gastado) }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay clientes con compras</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estadísticas Generales -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-calculator me-2"></i>
+                    Estadísticas Generales
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Calcular estadísticas -->
+                    {% set total_ventas_completadas = ventas_por_estado|selectattr('estado', 'equalto', 'Completada')|map(attribute='cantidad')|sum or 0 %}
+                    {% set total_ingresos = ventas_por_estado|selectattr('estado', 'equalto', 'Completada')|map(attribute='total')|sum or 0 %}
+                    {% set total_productos_vendidos = productos_mas_vendidos|map(attribute='cantidad_vendida')|sum or 0 %}
+                    {% set promedio_venta = (total_ingresos / total_ventas_completadas) if total_ventas_completadas > 0 else 0 %}
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                                <h4>{{ total_ventas_completadas }}</h4>
+                                <p class="mb-0">Ventas Completadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                                <h4>${{ "%.0f"|format(total_ingresos) }}</h4>
+                                <p class="mb-0">Ingresos Totales</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-box fa-2x mb-2"></i>
+                                <h4>{{ total_productos_vendidos }}</h4>
+                                <p class="mb-0">Productos Vendidos</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 mb-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body text-center">
+                                <i class="fas fa-chart-line fa-2x mb-2"></i>
+                                <h4>${{ "%.0f"|format(promedio_venta) }}</h4>
+                                <p class="mb-0">Promedio por Venta</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Análisis de Rendimiento -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-analytics me-2"></i>
+                    Análisis de Rendimiento
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-thumbs-up text-success me-2"></i>Fortalezas</h6>
+                        <ul class="list-unstyled">
+                            {% if productos_mas_vendidos|length > 0 %}
+                                <li><i class="fas fa-check-circle text-success me-2"></i>
+                                    Producto estrella: <strong>{{ productos_mas_vendidos[0].nombre }}</strong>
+                                </li>
+                            {% endif %}
+                            {% if mejores_clientes|length > 0 %}
+                                <li><i class="fas fa-check-circle text-success me-2"></i>
+                                    Cliente fiel: <strong>{{ mejores_clientes[0].nombre }} {{ mejores_clientes[0].apellido }}</strong>
+                                </li>
+                            {% endif %}
+                            {% if total_ventas_completadas > 0 %}
+                                <li><i class="fas fa-check-circle text-success me-2"></i>
+                                    {{ total_ventas_completadas }} ventas completadas exitosamente
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-exclamation-triangle text-warning me-2"></i>Oportunidades</h6>
+                        <ul class="list-unstyled">
+                            {% set ventas_pendientes = ventas_por_estado|selectattr('estado', 'equalto', 'Pendiente')|map(attribute='cantidad')|sum or 0 %}
+                            {% set ventas_canceladas = ventas_por_estado|selectattr('estado', 'equalto', 'Cancelada')|map(attribute='cantidad')|sum or 0 %}
+                            
+                            {% if ventas_pendientes > 0 %}
+                                <li><i class="fas fa-clock text-warning me-2"></i>
+                                    {{ ventas_pendientes }} venta(s) pendiente(s) de procesar
+                                </li>
+                            {% endif %}
+                            {% if ventas_canceladas > 0 %}
+                                <li><i class="fas fa-times-circle text-danger me-2"></i>
+                                    {{ ventas_canceladas }} venta(s) cancelada(s) - revisar causas
+                                </li>
+                            {% endif %}
+                            {% if productos_mas_vendidos|length < 5 %}
+                                <li><i class="fas fa-plus-circle text-info me-2"></i>
+                                    Considerar ampliar el catálogo de productos
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Acciones Recomendadas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('listar_ventas') }}?estado=Pendiente" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="fas fa-clock me-2"></i>Revisar Pendientes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('listar_productos') }}" class="btn btn-outline-info btn-sm w-100">
+                            <i class="fas fa-warehouse me-2"></i>Gestionar Stock
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('nueva_venta') }}" class="btn btn-outline-success btn-sm w-100">
+                            <i class="fas fa-plus me-2"></i>Nueva Venta
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('listar_clientes') }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-users me-2"></i>Contactar Clientes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function exportarReporte() {
+    // Simulación de exportación - en una implementación real, 
+    // esto enviaría los datos al servidor para generar un PDF o Excel
+    alert('Funcionalidad de exportación en desarrollo.\nPor ahora puedes usar la opción de imprimir.');
+}
+
+// Estilos para impresión
+const style = document.createElement('style');
+style.textContent = `
+    @media print {
+        .btn, .card-header .btn {
+            display: none !important;
+        }
+        .card {
+            border: 1px solid #dee2e6 !important;
+            page-break-inside: avoid;
+        }
+        .row {
+            page-break-inside: avoid;
+        }
+        body {
+            font-size: 12px;
+        }
+        .h2 {
+            font-size: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+        }
+    }
+`;
+document.head.appendChild(style);
+
+// Agregar fecha y hora de generación del reporte
+document.addEventListener('DOMContentLoaded', function() {
+    const ahora = new Date();
+    const fechaHora = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
+    
+    const info = document.createElement('p');
+    info.className = 'text-muted small text-end mt-4';
+    info.textContent = 'Reporte generado el ' + fechaHora;
+    
+    document.querySelector('.container-fluid .col-md-10').appendChild(info);
+});
+</script>
+{% endblock %}

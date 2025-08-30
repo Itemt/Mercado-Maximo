@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Sistema de Gestión de Ventas{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-tachometer-alt me-2"></i>
+        Dashboard
+    </h1>
+    <div>
+        <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nueva Venta
+        </a>
+    </div>
+</div>
+
+<!-- Estadísticas Principales -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x mb-2"></i>
+                <h4>{{ total_clientes }}</h4>
+                <p class="mb-0">Clientes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <i class="fas fa-box fa-2x mb-2"></i>
+                <h4>{{ total_productos }}</h4>
+                <p class="mb-0">Productos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+                <h4>{{ total_ventas }}</h4>
+                <p class="mb-0">Ventas Totales</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <i class="fas fa-clock fa-2x mb-2"></i>
+                <h4>{{ ventas_pendientes }}</h4>
+                <p class="mb-0">Pendientes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos Rápidos -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-rocket me-2"></i>
+                    Accesos Rápidos
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('nuevo_cliente') }}" class="btn btn-outline-primary btn-lg w-100">
+                            <i class="fas fa-user-plus d-block mb-2"></i>
+                            Nuevo Cliente
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('nuevo_producto') }}" class="btn btn-outline-success btn-lg w-100">
+                            <i class="fas fa-plus-square d-block mb-2"></i>
+                            Nuevo Producto
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('nueva_venta') }}" class="btn btn-outline-warning btn-lg w-100">
+                            <i class="fas fa-cash-register d-block mb-2"></i>
+                            Nueva Venta
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a href="{{ url_for('reportes') }}" class="btn btn-outline-info btn-lg w-100">
+                            <i class="fas fa-chart-line d-block mb-2"></i>
+                            Ver Reportes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ventas Recientes -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>
+                    Ventas Recientes
+                </h5>
+                <a href="{{ url_for('listar_ventas') }}" class="btn btn-sm btn-outline-primary">
+                    Ver Todas <i class="fas fa-arrow-right ms-1"></i>
+                </a>
+            </div>
+            <div class="card-body">
+                {% if ventas_recientes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta in ventas_recientes %}
+                                <tr>
+                                    <td><strong>#{{ venta.id }}</strong></td>
+                                    <td>{{ venta.cliente.nombre }} {{ venta.cliente.apellido }}</td>
+                                    <td>{{ venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td><strong>${{ "%.2f"|format(venta.total) }}</strong></td>
+                                    <td>
+                                        {% if venta.estado == 'Completada' %}
+                                            <span class="badge bg-success">{{ venta.estado }}</span>
+                                        {% elif venta.estado == 'Pendiente' %}
+                                            <span class="badge bg-warning text-dark">{{ venta.estado }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">{{ venta.estado }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('ver_venta', id=venta.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay ventas registradas aún.</p>
+                        <a href="{{ url_for('nueva_venta') }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primera Venta
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

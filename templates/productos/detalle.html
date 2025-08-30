@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}{{ producto.nombre }} - Producto{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">
+        <i class="fas fa-box me-2"></i>
+        {{ producto.nombre }}
+    </h1>
+    <div>
+        <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Editar
+        </a>
+        <a href="{{ url_for('listar_productos') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información del Producto -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Información del Producto
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>ID:</strong></div>
+                    <div class="col-sm-8">{{ producto.id }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Nombre:</strong></div>
+                    <div class="col-sm-8">{{ producto.nombre }}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Categoría:</strong></div>
+                    <div class="col-sm-8">
+                        {% if producto.categoria %}
+                            <span class="badge bg-secondary">{{ producto.categoria }}</span>
+                        {% else %}
+                            <span class="text-muted">Sin categoría</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Precio:</strong></div>
+                    <div class="col-sm-8">
+                        <h4 class="text-success">${{ "%.2f"|format(producto.precio) }}</h4>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Stock:</strong></div>
+                    <div class="col-sm-8">
+                        {% if producto.stock > 10 %}
+                            <span class="badge bg-success fs-6">{{ producto.stock }} unidades</span>
+                        {% elif producto.stock > 0 %}
+                            <span class="badge bg-warning text-dark fs-6">{{ producto.stock }} unidades</span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6">Agotado</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Estado:</strong></div>
+                    <div class="col-sm-8">
+                        {% if producto.stock > 0 %}
+                            <span class="badge bg-success">Disponible</span>
+                        {% else %}
+                            <span class="badge bg-danger">Sin Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4"><strong>Creado:</strong></div>
+                    <div class="col-sm-8">{{ producto.fecha_creacion.strftime('%d/%m/%Y a las %H:%M') }}</div>
+                </div>
+            </div>
+        </div>
+        
+        {% if producto.descripcion %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-align-left me-2"></i>
+                    Descripción
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>{{ producto.descripcion }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Estadísticas de Ventas -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    Estadísticas de Ventas
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set total_vendido = producto.detalles_venta|sum(attribute='cantidad') %}
+                {% set total_ingresos = producto.detalles_venta|sum(attribute='subtotal') %}
+                {% set total_ventas = producto.detalles_venta|length %}
+                
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h4 class="text-primary">{{ total_vendido or 0 }}</h4>
+                            <p class="mb-0 text-muted">Unidades Vendidas</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="border rounded p-3">
+                            <h4 class="text-success">${{ "%.2f"|format(total_ingresos or 0) }}</h4>
+                            <p class="mb-0 text-muted">Ingresos Generados</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <h4 class="text-info">{{ total_ventas }}</h4>
+                            <p class="mb-0 text-muted">Ventas Realizadas</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="border rounded p-3">
+                            <h4 class="text-warning">{{ producto.stock + (total_vendido or 0) }}</h4>
+                            <p class="mb-0 text-muted">Stock Inicial</p>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if producto.stock == 0 and total_vendido > 0 %}
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Producto agotado:</strong> Considera reponer el stock de este producto popular.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Acciones Rápidas -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bolt me-2"></i>
+                    Acciones Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('nueva_venta') }}?producto_id={{ producto.id }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-cart me-2"></i>Vender Este Producto
+                    </a>
+                    <a href="{{ url_for('editar_producto', id=producto.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit me-2"></i>Editar Información
+                    </a>
+                    {% if producto.stock == 0 %}
+                        <button class="btn btn-success" onclick="mostrarFormStock()">
+                            <i class="fas fa-plus me-2"></i>Reponer Stock
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Historial de Ventas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history me-2"></i>
+                    Historial de Ventas
+                </h5>
+                {% if producto.detalles_venta %}
+                    <span class="badge bg-primary">{{ producto.detalles_venta|length }} venta(s)</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if producto.detalles_venta %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>ID Venta</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detalle in producto.detalles_venta|sort(attribute='venta.fecha_venta', reverse=true) %}
+                                <tr>
+                                    <td><strong>#{{ detalle.venta.id }}</strong></td>
+                                    <td>{{ detalle.venta.cliente.nombre }} {{ detalle.venta.cliente.apellido }}</td>
+                                    <td>{{ detalle.venta.fecha_venta.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ detalle.cantidad }}</td>
+                                    <td>${{ "%.2f"|format(detalle.precio_unitario) }}</td>
+                                    <td><strong>${{ "%.2f"|format(detalle.subtotal) }}</strong></td>
+                                    <td>
+                                        <a href="{{ url_for('ver_venta', id=detalle.venta.id) }}" class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> Ver Venta
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Este producto aún no se ha vendido.</p>
+                        <a href="{{ url_for('nueva_venta') }}?producto_id={{ producto.id }}" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Crear Primera Venta
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Reponer Stock -->
+<div class="modal fade" id="modalStock" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reponer Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('editar_producto', id=producto.id) }}" method="POST">
+                <div class="modal-body">
+                    <p>Agregar stock para <strong>{{ producto.nombre }}</strong></p>
+                    <div class="mb-3">
+                        <label for="stockNuevo" class="form-label">Cantidad a agregar:</label>
+                        <input type="number" class="form-control" id="stockNuevo" name="stock" 
+                               min="1" required>
+                    </div>
+                    <!-- Campos ocultos para mantener otros datos -->
+                    <input type="hidden" name="nombre" value="{{ producto.nombre }}">
+                    <input type="hidden" name="descripcion" value="{{ producto.descripcion or '' }}">
+                    <input type="hidden" name="precio" value="{{ producto.precio }}">
+                    <input type="hidden" name="categoria" value="{{ producto.categoria or '' }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i>Agregar Stock
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function mostrarFormStock() {
+    var modal = new bootstrap.Modal(document.getElementById('modalStock'));
+    modal.show();
+}
+</script>
+{% endblock %}
