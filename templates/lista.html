@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Productos{% endblock %}
+
+{% block content %}
+<h2>Lista de productos</h2>
+<ul>
+{% for p in productos %}
+    <li>{{ p.nombreproducto }} - {{ p.precio }} - {{ p.cantidad }} - {{ p.descripcion }} - {{ p.imagen }} - {{ p.marca }} - {{ p.categoria }} - {{ p.fecha_vencimiento }} - {{ p.estado }} - {{ p.proveedor }} - {{ p.fecha_ingreso }}</li>
+        <a href="{{url_for('editar', id=p.id)}}">Editar</a>
+        <a href="{{url_for('eliminar', id=p.id)}}">Eliminar</a>
+        <a href="{{url_for('nuevo')}}">Nuevo</a>
+        <a href="{{url_for('lista')}}">Lista</a>
+        <a href="{{url_for('buscar')}}">Buscar</a>
+        <a href="{{url_for('login')}}">Login</a>
+        <a href="{{url_for('logout')}}">Logout</a>
+        <a href="{{url_for('registro')}}">Registro</a>
+        <a href="{{url_for('perfil')}}">Perfil</a>
+        <a href="{{url_for('carrito')}}">Carrito</a>
+    </li>
+{% else %}
+    <li>No hay productos</li>
+{% endfor %}
+</ul>
+<input type="button" value="Volver" onclick="window.location.href='{{ url_for('index') }}'">
+{% endblock %}

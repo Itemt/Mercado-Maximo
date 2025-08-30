@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Mercado Máximo{% endblock %}
+
+{% block content %}
+<h1>Bienvenido a Mercado Máximo</h1>
+<a href="{{url_for('nuevo')}}">Nuevo producto</a>
+<a href="{{ url_for('lista') }}">Lista de productos</a>
+<a href="{{ url_for('buscar') }}">Buscar producto</a>
+<a href="{{ url_for('login') }}">Login</a>
+<a href="{{ url_for('logout') }}">Logout</a>
+<a href="{{ url_for('registro') }}">Registro</a>
+<a href="{{ url_for('perfil') }}">Perfil</a>
+<a href="{{ url_for('carrito') }}">Carrito</a>
+{% endblock %}
