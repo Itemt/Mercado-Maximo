@@ -1,0 +1,82 @@
+/* Sistema de Gestión de Ventas - Estilos CSS */
+
+/* ===== ESTILOS GENERALES ===== */
+.navbar-brand {
+    font-weight: bold;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+}
+
+.stats-card .card-body {
+    text-align: center;
+}
+
+.sidebar {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.nav-link {
+    color: #495057;
+}
+
+.nav-link:hover {
+    color: #007bff;
+    background-color: #e9ecef;
+}
+
+.nav-link.active {
+    color: #007bff;
+    background-color: #e9ecef;
+}
+
+/* ===== ESTILOS ESPECÍFICOS ===== */
+.productos-disponibles {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* ===== ESTILOS PARA IMPRESIÓN ===== */
+@media print {
+    .modal-header, .modal-footer, .btn-close {
+        display: none !important;
+    }
+    .modal-dialog {
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+    .modal-content {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .btn, .card-header .btn {
+        display: none !important;
+    }
+    .card {
+        border: 1px solid #dee2e6 !important;
+        page-break-inside: avoid;
+    }
+    .row {
+        page-break-inside: avoid;
+    }
+    body {
+        font-size: 12px;
+    }
+    .h2 {
+        font-size: 1.5rem;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+}

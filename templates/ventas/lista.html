@@ -172,14 +172,14 @@
             </div>
             <div class="modal-body">
                 <p>¿Estás seguro de que deseas cambiar el estado de la venta <strong id="ventaId"></strong> a <strong id="nuevoEstado"></strong>?</p>
-                <div id="advertenciaStock" class="alert alert-warning" style="display: none;">
+                <div id="advertenciaStock" class="alert alert-warning d-none">
                     <i class="fas fa-exclamation-triangle me-2"></i>
                     Esta acción puede afectar el stock de los productos.
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="formCambiarEstado" method="POST" style="display: inline;">
+                <form id="formCambiarEstado" method="POST" class="d-inline">
                     <input type="hidden" name="estado" id="estadoInput">
                     <button type="submit" class="btn btn-primary" id="btnConfirmar">
                         <i class="fas fa-check me-2"></i>Confirmar
@@ -202,9 +202,9 @@ function cambiarEstado(ventaId, nuevoEstado) {
     // Mostrar advertencia si es cancelación
     const advertencia = document.getElementById('advertenciaStock');
     if (nuevoEstado === 'Cancelada') {
-        advertencia.style.display = 'block';
+        advertencia.classList.remove('d-none');
     } else {
-        advertencia.style.display = 'none';
+        advertencia.classList.add('d-none');
     }
     
     // Cambiar color del botón
