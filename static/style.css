@@ -152,25 +152,41 @@ a:hover {
 .form-control {
     background-color: var(--gris-oscuro);
     border-color: var(--gris-medio);
-    color: var(--gris-texto);
+    color: var(--blanco) !important;
 }
 
 .form-control:focus {
     background-color: var(--gris-oscuro);
     border-color: var(--gris-claro);
-    color: var(--blanco);
+    color: var(--blanco) !important;
     box-shadow: 0 0 0 0.2rem rgba(106, 106, 106, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--gris-claro) !important;
+    opacity: 0.8;
+}
+
+.form-control:disabled, .form-control[readonly] {
+    background-color: var(--gris-medio);
+    color: var(--gris-texto) !important;
+    opacity: 0.8;
 }
 
 .form-select {
     background-color: var(--gris-oscuro);
     border-color: var(--gris-medio);
-    color: var(--gris-texto);
+    color: var(--blanco) !important;
 }
 
 .form-select:focus {
     background-color: var(--gris-oscuro);
     border-color: var(--gris-claro);
+    color: var(--blanco) !important;
+}
+
+.form-select option {
+    background-color: var(--gris-oscuro);
     color: var(--blanco);
 }
 
