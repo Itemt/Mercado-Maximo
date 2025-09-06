@@ -164,7 +164,7 @@
                         <i class="fas fa-edit me-2"></i>Editar Información
                     </a>
                     {% if producto.stock == 0 %}
-                        <button class="btn btn-success" onclick="mostrarFormStock()">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalStock">
                             <i class="fas fa-plus me-2"></i>Reponer Stock
                         </button>
                     {% endif %}
@@ -269,11 +269,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-function mostrarFormStock() {
-    var modal = new bootstrap.Modal(document.getElementById('modalStock'));
-    modal.show();
-}
-</script>
-{% endblock %}
+{% block scripts %}{% endblock %}

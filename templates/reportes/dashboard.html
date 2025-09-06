@@ -9,9 +9,6 @@
         Reportes y Análisis
     </h1>
     <div>
-        <button type="button" class="btn btn-outline-primary" onclick="exportarReporte()">
-            <i class="fas fa-download me-2"></i>Exportar
-        </button>
         <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
             <i class="fas fa-print me-2"></i>Imprimir
         </button>
@@ -336,10 +333,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-function exportarReporte() {
-    alert('Funcionalidad de exportación en desarrollo.\nPor ahora puedes usar la opción de imprimir.');
-}
-</script>
-{% endblock %}
+{% block scripts %}{% endblock %}

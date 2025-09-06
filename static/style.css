@@ -194,39 +194,29 @@ footer {
     color: var(--gris-claro) !important;
 }
 
-/* Eliminar todos los colores - Todo a blanco */
-.text-success, .text-danger, .text-warning, .text-info {
+/* Colores simplificados - Todo a blanco */
+.text-success, .text-danger, .text-warning, .text-info, .text-white {
     color: #FFFFFF !important;
 }
 
-.bg-success, .bg-danger, .bg-warning, .bg-info, .bg-primary {
-    background-color: #FFFFFF !important;
-    color: var(--negro-principal) !important;
-}
-
+.bg-success, .bg-danger, .bg-warning, .bg-info, .bg-primary,
 .card.bg-primary, .card.bg-success, .card.bg-danger, .card.bg-warning, .card.bg-info {
     background-color: #FFFFFF !important;
     color: var(--negro-principal) !important;
 }
 
-.card.bg-primary .card-body, .card.bg-success .card-body, .card.bg-danger .card-body, .card.bg-warning .card-body, .card.bg-info .card-body {
-    background-color: #FFFFFF !important;
-    color: var(--negro-principal) !important;
-}
-
+.card.bg-primary .card-body, .card.bg-success .card-body, .card.bg-danger .card-body, .card.bg-warning .card-body, .card.bg-info .card-body,
 .card.bg-primary h4, .card.bg-primary p, .card.bg-primary i,
 .card.bg-success h4, .card.bg-success p, .card.bg-success i,
 .card.bg-danger h4, .card.bg-danger p, .card.bg-danger i,
 .card.bg-warning h4, .card.bg-warning p, .card.bg-warning i,
 .card.bg-info h4, .card.bg-info p, .card.bg-info i {
+    background-color: #FFFFFF !important;
     color: var(--negro-principal) !important;
 }
 
-.text-white {
-    color: var(--negro-principal) !important;
-}
-
-.btn-success, .btn-danger, .btn-warning, .btn-info {
+.btn-success, .btn-danger, .btn-warning, .btn-info,
+.badge.bg-success, .badge.bg-danger, .badge.bg-warning, .badge.bg-info {
     background-color: #FFFFFF !important;
     border-color: #FFFFFF !important;
     color: var(--negro-principal) !important;
@@ -249,19 +239,11 @@ footer {
     color: var(--negro-principal) !important;
 }
 
-.badge.bg-success, .badge.bg-danger, .badge.bg-warning, .badge.bg-info {
-    background-color: #FFFFFF !important;
-    color: var(--negro-principal) !important;
-}
-
-.alert-success, .alert-danger, .alert-warning, .alert-info {
+.alert-success, .alert-danger, .alert-warning, .alert-info,
+.border-success, .border-danger, .border-warning, .border-info {
     background-color: var(--gris-oscuro) !important;
     border-color: #FFFFFF !important;
     color: #FFFFFF !important;
-}
-
-.border-success, .border-danger, .border-warning, .border-info {
-    border-color: #FFFFFF !important;
 }
 
 /* Todos los botones iguales - Solo blanco y negro */
@@ -302,36 +284,3 @@ footer {
     color: var(--negro-principal) !important;
 }
 
-/* ===== ESTILOS PARA IMPRESIÓN ===== */
-@media print {
-    .modal-header, .modal-footer, .btn-close {
-        display: none !important;
-    }
-    .modal-dialog {
-        max-width: 100% !important;
-        margin: 0 !important;
-    }
-    .modal-content {
-        border: none !important;
-        box-shadow: none !important;
-    }
-    .btn, .card-header .btn {
-        display: none !important;
-    }
-    .card {
-        border: 1px solid #dee2e6 !important;
-        page-break-inside: avoid;
-    }
-    .row {
-        page-break-inside: avoid;
-    }
-    body {
-        font-size: 12px;
-    }
-    .h2 {
-        font-size: 1.5rem;
-    }
-    .card-title {
-        font-size: 1.1rem;
-    }
-}

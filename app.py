@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -341,16 +341,6 @@ def reportes():
                          productos_mas_vendidos=productos_mas_vendidos,
                          mejores_clientes=mejores_clientes)
 
-# ===== API ENDPOINTS PARA AJAX =====
-@app.route('/api/productos/<int:id>')
-def api_producto(id):
-    producto = Producto.query.get_or_404(id)
-    return jsonify({
-        'id': producto.id,
-        'nombre': producto.nombre,
-        'precio': producto.precio,
-        'stock': producto.stock
-    })
 
 if __name__ == '__main__':
     with app.app_context():

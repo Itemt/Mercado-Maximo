@@ -101,7 +101,7 @@
                     Esta acción no se puede deshacer.
                 </p>
                 <button type="button" class="btn btn-outline-danger" 
-                        onclick="confirmarEliminacion()">
+                        data-bs-toggle="modal" data-bs-target="#modalEliminar">
                     <i class="fas fa-trash me-2"></i>Eliminar Cliente
                 </button>
             </div>
@@ -134,11 +134,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-function confirmarEliminacion() {
-    var modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
-    modal.show();
-}
-</script>
-{% endblock %}
+{% block scripts %}{% endblock %}
