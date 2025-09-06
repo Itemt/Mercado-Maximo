@@ -128,18 +128,7 @@ a:hover {
     color: var(--gris-texto);
 }
 
-.table-dark {
-    background-color: var(--negro-secundario);
-}
-
-.table {
-    color: var(--gris-texto);
-}
-
-.table-light {
-    background-color: var(--gris-oscuro);
-    color: var(--gris-texto);
-}
+/* Estas reglas están ahora consolidadas en la sección TABLAS más abajo */
 
 .alert {
     background-color: var(--gris-oscuro);
@@ -244,6 +233,123 @@ footer {
     background-color: var(--gris-oscuro) !important;
     border-color: #FFFFFF !important;
     color: #FFFFFF !important;
+}
+
+/* TABLAS - Estilización consistente */
+.table {
+    color: var(--gris-texto);
+    background-color: transparent;
+}
+
+.table th {
+    border-color: var(--gris-medio);
+    color: var(--blanco);
+    font-weight: 600;
+    background-color: var(--gris-oscuro);
+}
+
+.table td {
+    border-color: var(--gris-medio);
+    color: var(--gris-texto);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: var(--gris-medio) !important;
+    color: var(--blanco) !important;
+}
+
+.table-hover tbody tr:hover td {
+    background-color: var(--gris-medio) !important;
+    color: var(--blanco) !important;
+}
+
+.table-hover tbody tr:hover td strong {
+    color: var(--blanco) !important;
+}
+
+.table-hover tbody tr:hover .text-muted {
+    color: var(--gris-claro) !important;
+}
+
+.table-light {
+    background-color: var(--gris-oscuro);
+    color: var(--gris-texto);
+}
+
+.table-light th {
+    background-color: var(--gris-medio);
+    border-color: var(--gris-claro);
+    color: var(--blanco);
+}
+
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table tbody tr {
+    transition: all 0.15s ease-in-out;
+}
+
+.table td strong {
+    color: var(--blanco);
+}
+
+.table .btn-group {
+    white-space: nowrap;
+}
+
+/* BADGES - Estilización consistente para tablas */
+.badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+.badge.bg-success, .badge.bg-primary, .badge.bg-info, 
+.badge.bg-warning, .badge.bg-danger, .badge.bg-secondary {
+    background-color: var(--blanco) !important;
+    color: var(--negro-principal) !important;
+    border: 1px solid var(--gris-medio);
+}
+
+.badge.bg-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.badge.bg-info {
+    background-color: #17a2b8 !important;
+    color: #fff !important;
+}
+
+.badge.bg-primary {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+
+/* BOTONES EN TABLAS - Estilización específica */
+.btn-group .btn {
+    border-radius: 4px;
+    margin: 0 1px;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 4px;
 }
 
 /* Todos los botones iguales - Solo blanco y negro */

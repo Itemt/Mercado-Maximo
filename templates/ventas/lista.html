@@ -85,7 +85,7 @@
                                 {% if venta.estado == 'Completada' %}
                                     <span class="badge bg-success">{{ venta.estado }}</span>
                                 {% elif venta.estado == 'Pendiente' %}
-                                    <span class="badge bg-warning text-dark">{{ venta.estado }}</span>
+                                    <span class="badge bg-warning">{{ venta.estado }}</span>
                                 {% else %}
                                     <span class="badge bg-danger">{{ venta.estado }}</span>
                                 {% endif %}
