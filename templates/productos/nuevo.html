@@ -75,38 +75,4 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<script>
-// Validación del formulario
-document.querySelector('form').addEventListener('submit', function(e) {
-    const nombre = document.getElementById('nombre').value.trim();
-    const precio = document.getElementById('precio').value;
-    
-    if (!nombre) {
-        e.preventDefault();
-        alert('Por favor, ingresa el nombre del producto');
-        return false;
-    }
-    
-    if (!precio || parseFloat(precio) <= 0) {
-        e.preventDefault();
-        alert('Por favor, ingresa un precio válido mayor a 0');
-        return false;
-    }
-});
-
-// Formatear precio mientras se escribe
-document.getElementById('precio').addEventListener('input', function(e) {
-    let value = e.target.value;
-    if (value && !isNaN(value)) {
-        // Limitar a 2 decimales
-        if (value.includes('.')) {
-            let parts = value.split('.');
-            if (parts[1] && parts[1].length > 2) {
-                e.target.value = parseFloat(value).toFixed(2);
-            }
-        }
-    }
-});
-</script>
-{% endblock %}
+{% block scripts %}{% endblock %}

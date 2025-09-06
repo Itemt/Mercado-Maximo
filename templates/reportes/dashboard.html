@@ -339,23 +339,7 @@
 {% block scripts %}
 <script>
 function exportarReporte() {
-    // Simulación de exportación - en una implementación real, 
-    // esto enviaría los datos al servidor para generar un PDF o Excel
     alert('Funcionalidad de exportación en desarrollo.\nPor ahora puedes usar la opción de imprimir.');
 }
-
-// Los estilos de impresión están ahora en style.css
-
-// Agregar fecha y hora de generación del reporte
-document.addEventListener('DOMContentLoaded', function() {
-    const ahora = new Date();
-    const fechaHora = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
-    
-    const info = document.createElement('p');
-    info.className = 'text-muted small text-end mt-4';
-    info.textContent = 'Reporte generado el ' + fechaHora;
-    
-    document.querySelector('.container-fluid .col-md-10').appendChild(info);
-});
 </script>
 {% endblock %}

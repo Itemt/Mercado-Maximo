@@ -293,41 +293,6 @@ function actualizarResumen() {
     }
 }
 
-// Validación del formulario
-document.getElementById('formVenta').addEventListener('submit', function(e) {
-    const cliente = document.getElementById('cliente_id').value;
-    const productos = document.querySelectorAll('.producto-row');
-    
-    if (!cliente) {
-        e.preventDefault();
-        alert('Por favor, selecciona un cliente');
-        return false;
-    }
-    
-    if (productos.length === 0) {
-        e.preventDefault();
-        alert('Por favor, agrega al menos un producto');
-        return false;
-    }
-    
-    // Validar que todos los productos tengan cantidad
-    let valid = true;
-    productos.forEach(fila => {
-        const select = fila.querySelector('.producto-select');
-        const cantidad = fila.querySelector('.cantidad-input');
-        
-        if (!select.value || !cantidad.value || cantidad.value <= 0) {
-            valid = false;
-        }
-    });
-    
-    if (!valid) {
-        e.preventDefault();
-        alert('Por favor, completa todos los productos con cantidades válidas');
-        return false;
-    }
-});
-
 // Agregar primer producto automáticamente
 document.addEventListener('DOMContentLoaded', function() {
     {% if productos|length > 0 %}

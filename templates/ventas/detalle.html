@@ -203,11 +203,6 @@
                     <a href="{{ url_for('nueva_venta') }}?cliente_id={{ venta.cliente.id }}" class="btn btn-outline-success">
                         <i class="fas fa-plus me-2"></i>Nueva Venta para Cliente
                     </a>
-                    {% if venta.estado != 'Cancelada' %}
-                        <button type="button" class="btn btn-outline-info" onclick="duplicarVenta()">
-                            <i class="fas fa-copy me-2"></i>Duplicar Venta
-                        </button>
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -345,24 +340,6 @@ function cambiarEstado(nuevoEstado) {
 function imprimirFactura() {
     var modal = new bootstrap.Modal(document.getElementById('modalFactura'));
     modal.show();
-}
-
-function duplicarVenta() {
-    const productos = [];
-    {% for detalle in venta.detalles %}
-        productos.push({
-            id: {{ detalle.producto.id }},
-            cantidad: {{ detalle.cantidad }}
-        });
-    {% endfor %}
-    
-    // Crear URL con parámetros
-    let url = '{{ url_for("nueva_venta") }}?cliente_id={{ venta.cliente.id }}';
-    productos.forEach((p, index) => {
-        url += `&producto_${index}_id=${p.id}&producto_${index}_cantidad=${p.cantidad}`;
-    });
-    
-    window.location.href = url;
 }
 
 // Los estilos de impresión están ahora en style.css

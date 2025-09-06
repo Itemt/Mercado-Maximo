@@ -1,60 +1,305 @@
-/* Sistema de Gestión de Ventas - Estilos CSS */
+/* Sistema de Gestión de Ventas - Modo Oscuro */
 
-/* ===== ESTILOS GENERALES ===== */
-.navbar-brand {
-    font-weight: bold;
+:root {
+    --negro-principal: #1a1a1a;
+    --negro-secundario: #2d2d2d;
+    --gris-oscuro: #3a3a3a;
+    --gris-medio: #4a4a4a;
+    --gris-claro: #6a6a6a;
+    --blanco: #ffffff;
+    --gris-texto: #e0e0e0;
+}
+
+body {
+    background-color: var(--negro-principal);
+    color: var(--gris-texto);
+}
+
+.navbar-oscuro {
+    background-color: var(--negro-secundario) !important;
+}
+
+.navbar-oscuro .navbar-brand,
+.navbar-oscuro .nav-link {
+    color: var(--blanco) !important;
+}
+
+.navbar-oscuro .nav-link:hover {
+    color: var(--gris-claro) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 5px;
 }
 
 .card {
-    transition: transform 0.2s;
+    background-color: var(--negro-secundario);
+    border-color: var(--gris-oscuro);
+    color: var(--gris-texto);
 }
 
 .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
 }
 
-.stats-card {
-    background: linear-gradient(45deg, #007bff, #0056b3);
-    color: white;
+.stats-card, .card.stats-card {
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    background-image: none !important;
+    color: var(--negro-principal) !important;
 }
 
-.stats-card .card-body {
+.stats-card .card-body, .card.stats-card .card-body {
     text-align: center;
+    background: #FFFFFF !important;
+    background-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.stats-card h4, .stats-card p, .stats-card i {
+    color: var(--negro-principal) !important;
 }
 
 .sidebar {
     min-height: 100vh;
-    background-color: #f8f9fa;
+    background-color: var(--negro-secundario);
     display: flex;
     flex-direction: column;
 }
 
-.sidebar-logo {
-    transition: opacity 0.3s ease;
-}
-
-.sidebar-logo:hover {
-    opacity: 1 !important;
-}
-
 .nav-link {
-    color: #495057;
+    color: var(--gris-texto);
 }
 
 .nav-link:hover {
-    color: #007bff;
-    background-color: #e9ecef;
+    color: var(--blanco);
+    background-color: var(--gris-oscuro);
 }
 
 .nav-link.active {
-    color: #007bff;
-    background-color: #e9ecef;
+    color: var(--negro-principal) !important;
+    background-color: #FFFFFF !important;
 }
 
-/* ===== ESTILOS ESPECÍFICOS ===== */
 .productos-disponibles {
     max-height: 300px;
     overflow-y: auto;
+}
+
+.btn-primary {
+    background-color: var(--gris-medio) !important;
+    border-color: var(--gris-medio) !important;
+    color: var(--blanco) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+}
+
+.btn-outline-primary {
+    color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+    color: var(--blanco) !important;
+}
+
+a {
+    color: var(--gris-claro);
+}
+
+a:hover {
+    color: var(--blanco);
+}
+
+.text-primary {
+    color: var(--gris-claro) !important;
+}
+
+.bg-primary {
+    background-color: var(--gris-medio) !important;
+}
+
+.card-header {
+    background-color: var(--gris-oscuro);
+    border-bottom-color: var(--gris-medio);
+    color: var(--gris-texto);
+}
+
+.table-dark {
+    background-color: var(--negro-secundario);
+}
+
+.table {
+    color: var(--gris-texto);
+}
+
+.table-light {
+    background-color: var(--gris-oscuro);
+    color: var(--gris-texto);
+}
+
+.alert {
+    background-color: var(--gris-oscuro);
+    border-color: var(--gris-medio);
+    color: var(--gris-texto);
+}
+
+.modal-content {
+    background-color: var(--negro-secundario);
+    color: var(--gris-texto);
+}
+
+.modal-header {
+    border-bottom-color: var(--gris-oscuro);
+}
+
+.modal-footer {
+    border-top-color: var(--gris-oscuro);
+}
+
+.form-control {
+    background-color: var(--gris-oscuro);
+    border-color: var(--gris-medio);
+    color: var(--gris-texto);
+}
+
+.form-control:focus {
+    background-color: var(--gris-oscuro);
+    border-color: var(--gris-claro);
+    color: var(--blanco);
+    box-shadow: 0 0 0 0.2rem rgba(106, 106, 106, 0.25);
+}
+
+.form-select {
+    background-color: var(--gris-oscuro);
+    border-color: var(--gris-medio);
+    color: var(--gris-texto);
+}
+
+.form-select:focus {
+    background-color: var(--gris-oscuro);
+    border-color: var(--gris-claro);
+    color: var(--blanco);
+}
+
+.text-muted {
+    color: var(--gris-claro) !important;
+}
+
+footer {
+    background-color: var(--negro-secundario) !important;
+    color: var(--gris-claro) !important;
+}
+
+/* Eliminar todos los colores - Todo a blanco */
+.text-success, .text-danger, .text-warning, .text-info {
+    color: #FFFFFF !important;
+}
+
+.bg-success, .bg-danger, .bg-warning, .bg-info, .bg-primary {
+    background-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.card.bg-primary, .card.bg-success, .card.bg-danger, .card.bg-warning, .card.bg-info {
+    background-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.card.bg-primary .card-body, .card.bg-success .card-body, .card.bg-danger .card-body, .card.bg-warning .card-body, .card.bg-info .card-body {
+    background-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.card.bg-primary h4, .card.bg-primary p, .card.bg-primary i,
+.card.bg-success h4, .card.bg-success p, .card.bg-success i,
+.card.bg-danger h4, .card.bg-danger p, .card.bg-danger i,
+.card.bg-warning h4, .card.bg-warning p, .card.bg-warning i,
+.card.bg-info h4, .card.bg-info p, .card.bg-info i {
+    color: var(--negro-principal) !important;
+}
+
+.text-white {
+    color: var(--negro-principal) !important;
+}
+
+.btn-success, .btn-danger, .btn-warning, .btn-info {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.btn-success:hover, .btn-danger:hover, .btn-warning:hover, .btn-info:hover {
+    background-color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+    color: var(--negro-principal) !important;
+}
+
+.btn-outline-success, .btn-outline-danger, .btn-outline-warning, .btn-outline-info {
+    color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+}
+
+.btn-outline-success:hover, .btn-outline-danger:hover, .btn-outline-warning:hover, .btn-outline-info:hover {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.badge.bg-success, .badge.bg-danger, .badge.bg-warning, .badge.bg-info {
+    background-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.alert-success, .alert-danger, .alert-warning, .alert-info {
+    background-color: var(--gris-oscuro) !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
+}
+
+.border-success, .border-danger, .border-warning, .border-info {
+    border-color: #FFFFFF !important;
+}
+
+/* Todos los botones iguales - Solo blanco y negro */
+.btn, .btn-primary, .btn-secondary, .btn-success, .btn-danger, .btn-warning, .btn-info, .btn-light, .btn-dark {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.btn:hover, .btn-primary:hover, .btn-secondary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover, .btn-info:hover, .btn-light:hover, .btn-dark:hover {
+    background-color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+    color: var(--negro-principal) !important;
+}
+
+.btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-danger, .btn-outline-warning, .btn-outline-info, .btn-outline-light, .btn-outline-dark {
+    background-color: transparent !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
+}
+
+.btn-outline-primary:hover, .btn-outline-secondary:hover, .btn-outline-success:hover, .btn-outline-danger:hover, .btn-outline-warning:hover, .btn-outline-info:hover, .btn-outline-light:hover, .btn-outline-dark:hover {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+/* Botones pequeños también iguales */
+.btn-sm, .btn-lg {
+    background-color: #FFFFFF !important;
+    border-color: #FFFFFF !important;
+    color: var(--negro-principal) !important;
+}
+
+.btn-sm:hover, .btn-lg:hover {
+    background-color: var(--gris-claro) !important;
+    border-color: var(--gris-claro) !important;
+    color: var(--negro-principal) !important;
 }
 
 /* ===== ESTILOS PARA IMPRESIÓN ===== */
