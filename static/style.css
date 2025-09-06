@@ -301,43 +301,21 @@ footer {
     white-space: nowrap;
 }
 
-/* BADGES - Estilización consistente para tablas */
+/* BADGES - Estilización monocromática */
 .badge {
     font-size: 0.75rem;
     font-weight: 500;
     padding: 0.35em 0.65em;
+    background-color: var(--blanco) !important;
+    color: var(--negro-principal) !important;
+    border: 1px solid var(--gris-medio) !important;
 }
 
 .badge.bg-success, .badge.bg-primary, .badge.bg-info, 
 .badge.bg-warning, .badge.bg-danger, .badge.bg-secondary {
     background-color: var(--blanco) !important;
     color: var(--negro-principal) !important;
-    border: 1px solid var(--gris-medio);
-}
-
-.badge.bg-warning {
-    background-color: #ffc107 !important;
-    color: #000 !important;
-}
-
-.badge.bg-success {
-    background-color: #28a745 !important;
-    color: #fff !important;
-}
-
-.badge.bg-danger {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-}
-
-.badge.bg-info {
-    background-color: #17a2b8 !important;
-    color: #fff !important;
-}
-
-.badge.bg-primary {
-    background-color: #007bff !important;
-    color: #fff !important;
+    border: 1px solid var(--gris-medio) !important;
 }
 
 /* BOTONES EN TABLAS - Estilización específica */
